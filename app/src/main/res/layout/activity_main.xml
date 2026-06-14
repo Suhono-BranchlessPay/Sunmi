@@ -74,11 +74,35 @@
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 
+        <TextView
+            android:id="@+id/queueStatsText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="@string/queue_stats_default"
+            android:textSize="13sp" />
+
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/testAnchorButton"
+            android:id="@+id/simulatePaymentButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="24dp"
+            android:text="@string/simulate_payment" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/flushQueueButton"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:text="@string/flush_queue" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/testAnchorButton"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
             android:text="@string/test_anchor" />
 
         <com.google.android.material.button.MaterialButton

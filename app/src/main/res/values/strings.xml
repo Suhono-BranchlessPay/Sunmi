@@ -15,7 +15,12 @@
     <string name="status_error">Status: Failed — %1$s</string>
     <string name="anchor_success">Anchor queued: %1$s</string>
     <string name="verify_url_label">Verify URL</string>
-    <string name="service_running">Background service: running (M1 stub)</string>
+    <string name="service_running">Background service: listening for payments (M2)</string>
+    <string name="service_notification_text">Anchoring Sunmi POS payments to BranchlessPay</string>
+    <string name="simulate_payment">Simulate Payment (M2)</string>
+    <string name="flush_queue">Flush Offline Queue</string>
+    <string name="queue_stats_default">Queue: pending 0 · anchored 0</string>
+    <string name="queue_stats">Queue: pending %1$d · anchored %2$d</string>
     <string name="save">Save</string>
     <string name="device_info">Device: %1$s · SN: %2$s</string>
 </resources>

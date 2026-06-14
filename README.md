@@ -18,12 +18,12 @@ Blockchain audit trail for Sunmi Android POS devices. Background service anchors
 
 | Milestone | Scope | Status |
 |-----------|-------|--------|
-| **M1** | Setup + basic anchor (Settings, test connection, test anchor) | ✅ |
-| M2 | Transaction capture + offline queue + Payment SDK | ⏳ |
+| **M1** | Setup + basic anchor | ✅ **CLOSED** |
+| **M2** | Payment capture + offline SQLite queue | ✅ Core complete |
 | M3 | History, WebView verify, QR print | ⏳ |
 | M4 | Sunmi App Store assets + signed release | ⏳ |
 
-See `docs/MILESTONE_M1.md` for M1 report.
+See `docs/MILESTONE_M1.md` (closed) · `docs/MILESTONE_M2.md` (current)
 
 ---
 

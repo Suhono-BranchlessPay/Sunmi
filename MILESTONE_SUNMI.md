@@ -2,8 +2,8 @@
 
 | Milestone | Target | Scope | Status |
 |-----------|--------|-------|--------|
-| **M1** | Week 1 | Setup + basic anchor | ✅ APK + API tested |
-| **M2** | Week 2–3 | Payment SDK + offline queue | ⏳ |
+| **M1** | Week 1 | Setup + basic anchor | ✅ **CLOSED** |
+| **M2** | Week 2–3 | Payment SDK + offline queue | ✅ Core complete |
 | **M3** | Week 4 | History + WebView verify + QR print | ⏳ |
 | **M4** | Week 5 | App Store assets + signed release | ⏳ |
 

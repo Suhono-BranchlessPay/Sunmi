@@ -1,9 +1,13 @@
 package com.branchlesspay.auditshield
 
+import android.content.BroadcastReceiver
+import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
 import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
 import com.branchlesspay.auditshield.databinding.ActivityMainBinding
 import kotlinx.coroutines.Dispatchers
@@ -12,6 +16,20 @@ import kotlinx.coroutines.withContext
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
+
+    private val anchorReceiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context?, intent: Intent?) {
+            if (intent?.action != BpAuditService.BROADCAST_ANCHOR_RESULT) return
+            showPaymentResult(intent)
+        }
+    }
+
+    private val queueReceiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context?, intent: Intent?) {
+            if (intent?.action != BpAuditService.BROADCAST_QUEUE_STATS) return
+            updateQueueStats(intent.getIntExtra("pending", 0), intent.getIntExtra("anchored", 0))
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -24,7 +42,7 @@ class MainActivity : AppCompatActivity() {
             DeviceInfo.serial(this),
         )
 
-        startService(Intent(this, BpAuditService::class.java))
+        startAuditService()
 
         binding.settingsButton.setOnClickListener {
             startActivity(Intent(this, SettingsActivity::class.java))
@@ -33,6 +51,83 @@ class MainActivity : AppCompatActivity() {
         binding.testAnchorButton.setOnClickListener {
             sendTestAnchor()
         }
+
+        binding.simulatePaymentButton.setOnClickListener {
+            if (!Prefs.isConfigured(this)) {
+                binding.statusText.text = getString(R.string.status_error, "Configure license key first")
+                return@setOnClickListener
+            }
+            binding.statusText.text = getString(R.string.status_testing)
+            startService(
+                Intent(this, BpAuditService::class.java).apply {
+                    action = BpAuditService.ACTION_SIMULATE_PAYMENT
+                },
+            )
+        }
+
+        binding.flushQueueButton.setOnClickListener {
+            startService(
+                Intent(this, BpAuditService::class.java).apply {
+                    action = BpAuditService.ACTION_FLUSH_QUEUE
+                },
+            )
+            binding.statusText.text = getString(R.string.status_testing)
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        val filter = IntentFilter().apply {
+            addAction(BpAuditService.BROADCAST_ANCHOR_RESULT)
+            addAction(BpAuditService.BROADCAST_QUEUE_STATS)
+        }
+        ContextCompat.registerReceiver(this, anchorReceiver, filter, ContextCompat.RECEIVER_NOT_EXPORTED)
+        ContextCompat.registerReceiver(this, queueReceiver, filter, ContextCompat.RECEIVER_NOT_EXPORTED)
+    }
+
+    override fun onPause() {
+        unregisterReceiver(anchorReceiver)
+        unregisterReceiver(queueReceiver)
+        super.onPause()
+    }
+
+    private fun startAuditService() {
+        ServiceStarter.startAuditService(this)
+    }
+
+    private fun showPaymentResult(intent: Intent) {
+        val ok = intent.getBooleanExtra("ok", false)
+        val queued = intent.getBooleanExtra("queued_offline", false)
+        val verifyUrl = intent.getStringExtra("verify_url")
+        val referenceId = intent.getStringExtra("reference_id")
+        val error = intent.getStringExtra("error")
+
+        binding.resultText.visibility = View.VISIBLE
+        when {
+            ok -> {
+                binding.statusText.text = getString(R.string.status_success, 202)
+                binding.resultText.text = buildString {
+                    append("Payment anchored: ")
+                    append(referenceId)
+                    append("\n\n")
+                    append(getString(R.string.verify_url_label))
+                    append(": ")
+                    append(verifyUrl ?: "-")
+                }
+            }
+            queued -> {
+                binding.statusText.text = getString(R.string.status_idle)
+                binding.resultText.text = "Payment queued offline: $referenceId\n$error"
+            }
+            else -> {
+                binding.statusText.text = getString(R.string.status_error, error ?: "failed")
+                binding.resultText.text = error ?: "Payment anchor failed"
+            }
+        }
+    }
+
+    private fun updateQueueStats(pending: Int, anchored: Int) {
+        binding.queueStatsText.text = getString(R.string.queue_stats, pending, anchored)
     }
 
     private fun sendTestAnchor() {

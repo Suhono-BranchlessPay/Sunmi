@@ -20,7 +20,7 @@ data class BpAnchorResult(
     val rawBody: String,
 )
 
-class BpApiClient(
+open class BpApiClient(
     private val licenseKey: String,
     private val apiUrl: String = DEFAULT_API_URL,
     private val client: OkHttpClient = defaultClient(),
@@ -58,7 +58,7 @@ class BpApiClient(
         }
     }
 
-    fun postAnchor(payload: Map<String, Any>): BpAnchorResult {
+    open fun postAnchor(payload: Map<String, Any>): BpAnchorResult {
         if (licenseKey.isBlank() || licenseKey.contains("YOUR_TOKEN")) {
             return BpAnchorResult(
                 ok = false,

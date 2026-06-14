@@ -41,14 +41,39 @@ object BpAnchorPayload {
             "timestamp" to isoNow(),
             "vendor" to "sunmi",
             "merchant_id" to deviceSn,
-            "metadata" to mapOf(
-                "erp" to "sunmi_pos",
-                "erp_system" to "Sunmi Android POS",
-                "device_model" to deviceModel,
-                "device_sn" to deviceSn,
-            ),
+            "metadata" to baseMetadata(deviceModel, deviceSn),
         )
     }
+
+    fun buildPayment(
+        event: PaymentEvent,
+        deviceModel: String,
+        deviceSn: String,
+    ): Map<String, Any> {
+        val merchantId = event.merchantId.ifBlank { deviceSn }
+        val metadata = baseMetadata(deviceModel, deviceSn).toMutableMap()
+        metadata["payment_method"] = event.paymentMethod
+        metadata["merchant_id"] = merchantId
+
+        return mapOf(
+            "event_type" to "sunmi_payment",
+            "reference_id" to event.transactionId,
+            "amount" to event.amountCents.toDouble(),
+            "currency" to event.currency,
+            "timestamp" to event.timestampIso,
+            "vendor" to "sunmi",
+            "merchant_id" to merchantId,
+            "metadata" to metadata,
+        )
+    }
+
+    private fun baseMetadata(deviceModel: String, deviceSn: String): Map<String, Any> =
+        mapOf(
+            "erp" to "sunmi_pos",
+            "erp_system" to "Sunmi Android POS",
+            "device_model" to deviceModel,
+            "device_sn" to deviceSn,
+        )
 
     fun isoNow(): String {
         val formatter = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.US)
