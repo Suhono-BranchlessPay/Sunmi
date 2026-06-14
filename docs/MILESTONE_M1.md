@@ -24,12 +24,22 @@
 
 ## Manual test checklist
 
-- [ ] Open app on emulator or Sunmi device
-- [ ] Settings → enter BP license key → Save
-- [ ] Test Connection → **HTTP 202**
-- [ ] Home → Send Test Anchor → verify URL shown
-- [ ] Open verify URL in browser → page loads
+- [x] BP API test anchor via `scripts/test_anchor.py` → HTTP 202
+- [x] Gradle unit tests → 3/3 PASS
+- [x] Debug APK built → `app/build/outputs/apk/debug/app-debug.apk`
+- [ ] Install APK on Sunmi device / emulator
+- [ ] Settings → Test Connection → **HTTP 202**
+- [ ] Home → Send Test Anchor → verify URL opens
 - [ ] Screenshot for Bos submission
+
+## Live test (2026-06-14)
+
+| Check | Result |
+|-------|--------|
+| `scripts/test_anchor.py` | HTTP **202** ✅ |
+| Verify URL | https://branchlesspay.com/verify/f1bb17dd-ece8-45d4-a7f3-f0c84ed9af0e |
+| Gradle `test` | **3/3 PASS** |
+| `assembleDebug` | **BUILD SUCCESSFUL** |
 
 ---
 

@@ -3,9 +3,11 @@ plugins {
     id("org.jetbrains.kotlin.android")
 }
 
+import java.util.Properties
+
 android {
     namespace = "com.branchlesspay.auditshield"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "com.branchlesspay.auditshield"
@@ -18,7 +20,17 @@ android {
     }
 
     buildTypes {
+        debug {
+            val localProps = Properties()
+            val localFile = rootProject.file("local.properties")
+            if (localFile.exists()) {
+                localFile.inputStream().use { localProps.load(it) }
+            }
+            val devKey = localProps.getProperty("bp.license.key", "")
+            buildConfigField("String", "DEFAULT_LICENSE_KEY", "\"$devKey\"")
+        }
         release {
+            buildConfigField("String", "DEFAULT_LICENSE_KEY", "\"\"")
             isMinifyEnabled = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
@@ -38,6 +50,7 @@ android {
 
     buildFeatures {
         viewBinding = true
+        buildConfig = true
     }
 }
 

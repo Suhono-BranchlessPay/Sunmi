@@ -47,10 +47,18 @@ See `docs/MILESTONE_M1.md` for M1 report.
 6. **Send Test Anchor** → copy verify URL
 
 ```powershell
-# Optional: run JVM unit tests
-cd Sunmi
-.\gradlew.bat test
+# API smoke test (uses .env — copy from .env.example)
+python scripts/test_anchor.py
+
+# Unit tests + debug APK (Android Studio JBR required)
+powershell -ExecutionPolicy Bypass -File scripts\run_tests_and_build.ps1
 ```
+
+APK output: `app/build/outputs/apk/debug/app-debug.apk`
+
+**Debug builds:** pre-fill license key via `local.properties` → `bp.license.key=...` (see `local.properties.example`, gitignored).
+
+Open in Android Studio: `C:\Program Files\Android\Android Studio\bin\studio64.exe` → Open `Sunmi/`
 
 ---
 

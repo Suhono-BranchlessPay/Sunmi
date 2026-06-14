@@ -1,0 +1,3 @@
+# Copy to local.properties (gitignored) — do NOT commit real keys
+sdk.dir=C\:\\Users\\Thinkbook\\AppData\\Local\\Android\\Sdk
+bp.license.key=

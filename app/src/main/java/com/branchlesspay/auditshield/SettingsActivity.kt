@@ -17,7 +17,13 @@ class SettingsActivity : AppCompatActivity() {
         setContentView(binding.root)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
-        binding.licenseKeyInput.setText(Prefs.getLicenseKey(this))
+        binding.licenseKeyInput.setText(Prefs.getLicenseKey(this).ifEmpty {
+            if (BuildConfig.DEFAULT_LICENSE_KEY.isNotBlank()) {
+                BuildConfig.DEFAULT_LICENSE_KEY
+            } else {
+                ""
+            }
+        })
         binding.apiUrlInput.setText(Prefs.getApiUrl(this))
 
         binding.saveButton.setOnClickListener {
