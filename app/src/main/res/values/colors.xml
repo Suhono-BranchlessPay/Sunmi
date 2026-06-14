@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="bp_primary">#1A237E</color>
+    <color name="bp_primary_dark">#0D1642</color>
+    <color name="bp_accent">#00C853</color>
+    <color name="bp_error">#C62828</color>
+    <color name="bp_surface">#F5F7FA</color>
+    <color name="white">#FFFFFF</color>
+</resources>

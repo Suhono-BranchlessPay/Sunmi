@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">BP Audit Shield</string>
+    <string name="settings_title">Settings</string>
+    <string name="tagline">Sunmi POS blockchain audit trail</string>
+    <string name="license_key_hint">BP License Key</string>
+    <string name="api_url_hint">BP API URL</string>
+    <string name="default_api_url">https://branchlesspay.com/api/v1/anchor</string>
+    <string name="test_connection">Test Connection</string>
+    <string name="test_anchor">Send Test Anchor</string>
+    <string name="open_settings">Settings</string>
+    <string name="status_idle">Status: Ready</string>
+    <string name="status_testing">Status: Testing…</string>
+    <string name="status_success">Status: Connected (HTTP %1$d)</string>
+    <string name="status_error">Status: Failed — %1$s</string>
+    <string name="anchor_success">Anchor queued: %1$s</string>
+    <string name="verify_url_label">Verify URL</string>
+    <string name="service_running">Background service: running (M1 stub)</string>
+    <string name="save">Save</string>
+    <string name="device_info">Device: %1$s · SN: %2$s</string>
+</resources>
