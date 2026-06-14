@@ -3,12 +3,12 @@
 | Milestone | Target | Scope | Status |
 |-----------|--------|-------|--------|
 | **M1** | Week 1 | Setup + basic anchor | ✅ **CLOSED** |
-| **M2** | Week 2–3 | Payment SDK + offline queue | ✅ Core complete |
+| **M2** | Week 2–3 | Payment SDK + offline queue | ✅ **CLOSED** |
 | **M3** | Week 4 | History + WebView verify + QR print | ✅ **CLOSED** |
-| **M4** | Week 5 | App Store assets + signed release | ⏳ |
+| **M4** | Week 5 | App Store assets + signed release | ✅ **CLOSED** |
 
 **Project deadline:** September 2026  
-**Total:** 4–5 weeks
+**Total:** 4–5 weeks · **All milestones complete**
 
 ## ERP integration matrix
 
@@ -19,3 +19,7 @@
 ## GitHub
 
 https://github.com/Suhono-BranchlessPay/Sunmi · branch `dev`
+
+## Sunmi App Store
+
+Submission pack: `docs/SUNMI_APPSTORE.md` · assets: `store/`

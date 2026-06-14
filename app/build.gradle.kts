@@ -13,10 +13,27 @@ android {
         applicationId = "com.branchlesspay.auditshield"
         minSdk = 21
         targetSdk = 34
-        versionCode = 1
-        versionName = "0.3.0-m3"
+        versionCode = 4
+        versionName = "1.0.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    signingConfigs {
+        create("release") {
+            val localProps = Properties()
+            val localFile = rootProject.file("local.properties")
+            if (localFile.exists()) {
+                localFile.inputStream().use { localProps.load(it) }
+            }
+            val keystorePath = localProps.getProperty("release.keystore.file", "")
+            if (keystorePath.isNotBlank()) {
+                storeFile = rootProject.file(keystorePath)
+                storePassword = localProps.getProperty("release.keystore.password", "")
+                keyAlias = localProps.getProperty("release.key.alias", "bp-audit-shield")
+                keyPassword = localProps.getProperty("release.key.password", "")
+            }
+        }
     }
 
     buildTypes {
@@ -36,6 +53,7 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro",
             )
+            signingConfig = signingConfigs.getByName("release")
         }
     }
 

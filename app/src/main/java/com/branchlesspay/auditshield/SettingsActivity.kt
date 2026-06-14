@@ -1,5 +1,7 @@
 package com.branchlesspay.auditshield
 
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
@@ -25,6 +27,18 @@ class SettingsActivity : AppCompatActivity() {
             }
         })
         binding.apiUrlInput.setText(Prefs.getApiUrl(this))
+
+        binding.appVersionText.text = getString(
+            R.string.app_version,
+            BuildConfig.VERSION_NAME,
+            BuildConfig.VERSION_CODE,
+        )
+
+        binding.privacyPolicyButton.setOnClickListener {
+            startActivity(
+                Intent(Intent.ACTION_VIEW, Uri.parse(getString(R.string.privacy_policy_url))),
+            )
+        }
 
         binding.saveButton.setOnClickListener {
             Prefs.save(

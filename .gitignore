@@ -16,6 +16,10 @@ app/build/
 .env.local
 *.docx
 _doc_extract.txt
+_m4_extract.txt
+/keystore/
+release.keystore
+/store/generated/
 
 # Android Studio
 .idea/
