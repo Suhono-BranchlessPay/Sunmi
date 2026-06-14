@@ -14,7 +14,7 @@ android {
         minSdk = 21
         targetSdk = 34
         versionCode = 1
-        versionName = "0.1.0-m1"
+        versionName = "0.3.0-m3"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -60,6 +60,9 @@ dependencies {
     implementation("com.google.android.material:material:1.11.0")
     implementation("androidx.constraintlayout:constraintlayout:2.1.4")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.7.0")
+    implementation("androidx.recyclerview:recyclerview:1.3.2")
+
+    implementation("com.sunmi:printerlibrary:1.0.22")
 
     implementation("com.squareup.okhttp3:okhttp:4.12.0")
     implementation("com.google.code.gson:gson:2.10.1")

@@ -105,6 +105,43 @@ class SqliteAnchorQueue(context: Context) : SQLiteOpenHelper(
 
     override fun countAnchored(): Int = countByStatus(QueueStatus.ANCHORED)
 
+    override fun countFailed(): Int = countByStatus(QueueStatus.FAILED)
+
+    override fun getById(id: Long): QueuedAnchor? {
+        val cursor = readableDatabase.query(
+            "anchor_queue",
+            null,
+            "id = ?",
+            arrayOf(id.toString()),
+            null,
+            null,
+            null,
+        )
+        cursor.use {
+            return if (cursor.moveToFirst()) cursor.toQueuedAnchor() else null
+        }
+    }
+
+    override fun recordAnchored(
+        referenceId: String,
+        eventType: String,
+        payload: Map<String, Any>,
+        anchorId: String,
+        verifyUrl: String,
+    ): Long {
+        val values = ContentValues().apply {
+            put("reference_id", referenceId)
+            put("event_type", eventType)
+            put("payload_json", gson.toJson(payload))
+            put("retry_count", 0)
+            put("status", QueueStatus.ANCHORED.name)
+            put("anchor_id", anchorId)
+            put("verify_url", verifyUrl)
+            put("created_at", System.currentTimeMillis())
+        }
+        return writableDatabase.insert("anchor_queue", null, values)
+    }
+
     override fun recent(limit: Int): List<QueuedAnchor> {
         val cursor = readableDatabase.query(
             "anchor_queue",

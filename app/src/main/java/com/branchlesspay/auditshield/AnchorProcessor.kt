@@ -50,6 +50,16 @@ class AnchorProcessor(
         }
 
         val result = postPayload(payload, referenceId)
+        if (result.ok && result.anchorId != null) {
+            queue.recordAnchored(
+                referenceId = referenceId,
+                eventType = payload["event_type"] as String,
+                payload = payload,
+                anchorId = result.anchorId,
+                verifyUrl = result.verifyUrl ?: TransactionFormatter.buildVerifyUrl(result.anchorId) ?: "",
+            )
+            return result
+        }
         if (result.ok) return result
 
         queue.enqueue(referenceId, payload["event_type"] as String, payload)

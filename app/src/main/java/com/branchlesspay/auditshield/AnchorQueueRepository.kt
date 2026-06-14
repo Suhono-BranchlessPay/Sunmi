@@ -27,5 +27,14 @@ interface AnchorQueueRepository {
     fun incrementRetry(id: Long, error: String)
     fun countPending(): Int
     fun countAnchored(): Int
+    fun countFailed(): Int
     fun recent(limit: Int = 20): List<QueuedAnchor>
+    fun getById(id: Long): QueuedAnchor?
+    fun recordAnchored(
+        referenceId: String,
+        eventType: String,
+        payload: Map<String, Any>,
+        anchorId: String,
+        verifyUrl: String,
+    ): Long
 }

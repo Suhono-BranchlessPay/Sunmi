@@ -35,6 +35,18 @@
             android:label="@string/settings_title"
             android:parentActivityName=".MainActivity" />
 
+        <activity
+            android:name=".TransactionHistoryActivity"
+            android:exported="false"
+            android:label="@string/transaction_history"
+            android:parentActivityName=".MainActivity" />
+
+        <activity
+            android:name=".VerifyActivity"
+            android:exported="false"
+            android:label="@string/verify_title"
+            android:parentActivityName=".TransactionHistoryActivity" />
+
         <service
             android:name=".BpAuditService"
             android:enabled="true"

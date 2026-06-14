@@ -48,6 +48,10 @@ class MainActivity : AppCompatActivity() {
             startActivity(Intent(this, SettingsActivity::class.java))
         }
 
+        binding.historyButton.setOnClickListener {
+            startActivity(Intent(this, TransactionHistoryActivity::class.java))
+        }
+
         binding.testAnchorButton.setOnClickListener {
             sendTestAnchor()
         }
@@ -103,6 +107,7 @@ class MainActivity : AppCompatActivity() {
         val error = intent.getStringExtra("error")
 
         binding.resultText.visibility = View.VISIBLE
+        binding.openVerifyButton.visibility = View.GONE
         when {
             ok -> {
                 binding.statusText.text = getString(R.string.status_success, 202)
@@ -113,6 +118,18 @@ class MainActivity : AppCompatActivity() {
                     append(getString(R.string.verify_url_label))
                     append(": ")
                     append(verifyUrl ?: "-")
+                }
+                if (!verifyUrl.isNullOrBlank()) {
+                    binding.openVerifyButton.visibility = View.VISIBLE
+                    binding.openVerifyButton.setOnClickListener {
+                        startActivity(
+                            Intent(this@MainActivity, VerifyActivity::class.java).apply {
+                                putExtra(VerifyActivity.EXTRA_VERIFY_URL, verifyUrl)
+                                putExtra(VerifyActivity.EXTRA_REFERENCE_ID, referenceId)
+                                putExtra(VerifyActivity.EXTRA_ANCHOR_ID, intent.getStringExtra("anchor_id"))
+                            },
+                        )
+                    }
                 }
             }
             queued -> {

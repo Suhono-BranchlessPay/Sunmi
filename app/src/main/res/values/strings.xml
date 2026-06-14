@@ -23,4 +23,14 @@
     <string name="queue_stats">Queue: pending %1$d · anchored %2$d</string>
     <string name="save">Save</string>
     <string name="device_info">Device: %1$s · SN: %2$s</string>
+    <string name="transaction_history">Transaction History</string>
+    <string name="history_empty">No transactions yet. Simulate a payment to get started.</string>
+    <string name="verify_title">Verify Transaction</string>
+    <string name="verified_badge">✓ VERIFIED</string>
+    <string name="share_verify">Share Verify URL</string>
+    <string name="print_qr">Print QR</string>
+    <string name="open_verify">Open Verify Page</string>
+    <string name="history_pending_hint">Transaction still pending sync</string>
+    <string name="printer_unavailable">Sunmi printer not available on this device</string>
+    <string name="printer_sent">QR sent to printer</string>
 </resources>

@@ -1,64 +1,32 @@
 package com.branchlesspay.auditshield
 
 import org.junit.Assert.assertEquals
-import org.junit.Assert.assertFalse
-import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertTrue
 import org.junit.Test
 
-class BpAnchorPayloadTest {
+class TransactionFormatterTest {
     @Test
-    fun buildTestTransaction_hasSunmiFields() {
-        val payload = BpAnchorPayload.buildTestTransaction("V2 Pro", "SN12345")
-        assertEquals("sunmi_transaction", payload["event_type"])
-        assertEquals("IDR", payload["currency"])
-        assertEquals(10000.0, payload["amount"])
-        @Suppress("UNCHECKED_CAST")
-        val metadata = payload["metadata"] as Map<String, Any>
-        assertEquals("sunmi_pos", metadata["erp"])
-        assertEquals("V2 Pro", metadata["device_model"])
-        assertEquals("SN12345", metadata["device_sn"])
-        assertTrue((payload["reference_id"] as String).startsWith("TEST-"))
+    fun statusLabels() {
+        assertEquals("Pending", TransactionFormatter.statusLabel(QueueStatus.PENDING))
+        assertEquals("Anchored", TransactionFormatter.statusLabel(QueueStatus.ANCHORED))
+        assertEquals("Failed", TransactionFormatter.statusLabel(QueueStatus.FAILED))
     }
 
     @Test
-    fun buildPayment_hasSunmiPaymentEventType() {
-        val event = PaymentEvent.simulated(amountCents = 50000, currency = "IDR")
-        val payload = BpAnchorPayload.buildPayment(event, "T2mini", "SN999")
-        assertEquals("sunmi_payment", payload["event_type"])
-        assertEquals(event.transactionId, payload["reference_id"])
-        assertEquals(50000.0, payload["amount"])
-        @Suppress("UNCHECKED_CAST")
-        val metadata = payload["metadata"] as Map<String, Any>
-        assertEquals("card", metadata["payment_method"])
-        assertEquals("T2mini", metadata["device_model"])
-    }
-}
-
-class BpApiClientTest {
-    @Test
-    fun legacyContentHash_isDeterministic() {
-        val payload = linkedMapOf<String, Any>(
-            "event_type" to "sunmi_transaction",
-            "reference_id" to "TEST-FIXED",
-            "amount" to 10000.0,
-            "currency" to "IDR",
-            "timestamp" to "2026-06-14T00:00:00Z",
-            "metadata" to mapOf("erp" to "sunmi_pos"),
-        )
-        val hash1 = BpApiClient.legacyContentHash(payload)
-        val hash2 = BpApiClient.legacyContentHash(payload)
-        assertEquals(hash1, hash2)
-        assertEquals(64, hash1.length)
+    fun formatAmount_fromPayloadJson() {
+        val json = """{"amount":25000,"currency":"IDR"}"""
+        assertEquals("Rp 25000", TransactionFormatter.formatAmount(json))
     }
 
     @Test
-    fun postAnchor_withoutLicenseKey_failsFast() {
-        val result = BpApiClient(licenseKey = "").postAnchor(
-            BpAnchorPayload.buildTestTransaction("T2mini", "dev-sn"),
-        )
-        assertFalse(result.ok)
-        assertEquals("BP license key is not configured", result.error)
+    fun buildVerifyUrl() {
+        val url = TransactionFormatter.buildVerifyUrl("abc-123")
+        assertEquals("https://branchlesspay.com/verify/abc-123", url)
+    }
+
+    @Test
+    fun formatMoney_usd() {
+        assertEquals("$10.50", TransactionFormatter.formatMoney(10.5, "USD"))
     }
 }
 
@@ -73,7 +41,6 @@ class SunmiPaymentParserTest {
                 "payType" to "QRIS",
             ),
         )
-        assertNotNull(event)
         assertEquals("TX-1001", event!!.transactionId)
         assertEquals(15000L, event.amountCents)
         assertEquals("QRIS", event.paymentMethod)
@@ -94,7 +61,7 @@ class AnchorProcessorTest {
     )
 
     @Test
-    fun processPayment_onlineSuccess() {
+    fun processPayment_onlineSuccess_recordsHistory() {
         val queue = InMemoryAnchorQueue()
         val processor = AnchorProcessor(
             queue = queue,
@@ -118,6 +85,7 @@ class AnchorProcessorTest {
         val result = processor.processPayment(event, "V2", "SN1")
         assertTrue(result.ok)
         assertEquals(0, queue.countPending())
+        assertEquals(1, queue.countAnchored())
     }
 
     @Test
@@ -195,6 +163,20 @@ class InMemoryQueueTest {
         assertEquals(0, queue.countPending())
         assertEquals(1, queue.countAnchored())
     }
+
+    @Test
+    fun recordAnchored_insertsHistoryRow() {
+        val queue = InMemoryAnchorQueue()
+        queue.recordAnchored(
+            referenceId = "PAY-2",
+            eventType = "sunmi_payment",
+            payload = mapOf("reference_id" to "PAY-2", "amount" to 100.0, "currency" to "IDR"),
+            anchorId = "id-2",
+            verifyUrl = "https://branchlesspay.com/verify/id-2",
+        )
+        assertEquals(1, queue.countAnchored())
+        assertEquals("PAY-2", queue.getById(1)?.referenceId)
+    }
 }
 
 class PaymentEventTest {
@@ -202,5 +184,61 @@ class PaymentEventTest {
     fun simulated_hasPayPrefix() {
         val event = PaymentEvent.simulated()
         assertTrue(event.transactionId.startsWith("PAY-"))
+    }
+}
+
+class BpAnchorPayloadTest {
+    @Test
+    fun buildTestTransaction_hasSunmiFields() {
+        val payload = BpAnchorPayload.buildTestTransaction("V2 Pro", "SN12345")
+        assertEquals("sunmi_transaction", payload["event_type"])
+        assertEquals("IDR", payload["currency"])
+        assertEquals(10000.0, payload["amount"])
+        @Suppress("UNCHECKED_CAST")
+        val metadata = payload["metadata"] as Map<String, Any>
+        assertEquals("sunmi_pos", metadata["erp"])
+        assertEquals("V2 Pro", metadata["device_model"])
+        assertEquals("SN12345", metadata["device_sn"])
+        assertTrue((payload["reference_id"] as String).startsWith("TEST-"))
+    }
+
+    @Test
+    fun buildPayment_hasSunmiPaymentEventType() {
+        val event = PaymentEvent.simulated(amountCents = 50000, currency = "IDR")
+        val payload = BpAnchorPayload.buildPayment(event, "T2mini", "SN999")
+        assertEquals("sunmi_payment", payload["event_type"])
+        assertEquals(event.transactionId, payload["reference_id"])
+        assertEquals(50000.0, payload["amount"])
+        @Suppress("UNCHECKED_CAST")
+        val metadata = payload["metadata"] as Map<String, Any>
+        assertEquals("card", metadata["payment_method"])
+        assertEquals("T2mini", metadata["device_model"])
+    }
+}
+
+class BpApiClientTest {
+    @Test
+    fun legacyContentHash_isDeterministic() {
+        val payload = linkedMapOf<String, Any>(
+            "event_type" to "sunmi_transaction",
+            "reference_id" to "TEST-FIXED",
+            "amount" to 10000.0,
+            "currency" to "IDR",
+            "timestamp" to "2026-06-14T00:00:00Z",
+            "metadata" to mapOf("erp" to "sunmi_pos"),
+        )
+        val hash1 = BpApiClient.legacyContentHash(payload)
+        val hash2 = BpApiClient.legacyContentHash(payload)
+        assertEquals(hash1, hash2)
+        assertEquals(64, hash1.length)
+    }
+
+    @Test
+    fun postAnchor_withoutLicenseKey_failsFast() {
+        val result = BpApiClient(licenseKey = "").postAnchor(
+            BpAnchorPayload.buildTestTransaction("T2mini", "dev-sn"),
+        )
+        assertTrue(!result.ok)
+        assertEquals("BP license key is not configured", result.error)
     }
 }

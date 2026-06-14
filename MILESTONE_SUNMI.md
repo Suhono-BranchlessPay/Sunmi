@@ -4,7 +4,7 @@
 |-----------|--------|-------|--------|
 | **M1** | Week 1 | Setup + basic anchor | ✅ **CLOSED** |
 | **M2** | Week 2–3 | Payment SDK + offline queue | ✅ Core complete |
-| **M3** | Week 4 | History + WebView verify + QR print | ⏳ |
+| **M3** | Week 4 | History + WebView verify + QR print | ✅ **CLOSED** |
 | **M4** | Week 5 | App Store assets + signed release | ⏳ |
 
 **Project deadline:** September 2026  

@@ -44,6 +44,33 @@ class InMemoryAnchorQueue : AnchorQueueRepository {
 
     override fun countAnchored(): Int = items.count { it.status == QueueStatus.ANCHORED }
 
+    override fun countFailed(): Int = items.count { it.status == QueueStatus.FAILED }
+
+    override fun getById(id: Long): QueuedAnchor? = items.firstOrNull { it.id == id }
+
+    override fun recordAnchored(
+        referenceId: String,
+        eventType: String,
+        payload: Map<String, Any>,
+        anchorId: String,
+        verifyUrl: String,
+    ): Long {
+        val item = QueuedAnchor(
+            id = nextId++,
+            referenceId = referenceId,
+            eventType = eventType,
+            payloadJson = gson.toJson(payload),
+            retryCount = 0,
+            status = QueueStatus.ANCHORED,
+            anchorId = anchorId,
+            verifyUrl = verifyUrl,
+            error = null,
+            createdAt = System.currentTimeMillis(),
+        )
+        items.add(item)
+        return item.id
+    }
+
     override fun recent(limit: Int): List<QueuedAnchor> =
         items.sortedByDescending { it.createdAt }.take(limit)
 

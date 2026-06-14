@@ -71,6 +71,15 @@
                     android:textIsSelectable="true"
                     android:textSize="13sp"
                     android:visibility="gone" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/openVerifyButton"
+                    style="@style/Widget.MaterialComponents.Button.TextButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:text="@string/open_verify"
+                    android:visibility="gone" />
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 
@@ -96,6 +105,13 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="12dp"
             android:text="@string/flush_queue" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/historyButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:text="@string/transaction_history" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/testAnchorButton"
